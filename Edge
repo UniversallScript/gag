@@ -1,113 +1,291 @@
--- Create ScreenGui
+local tweenService = game:GetService("TweenService")
+
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "LoadingScreen"
-screenGui.ResetOnSpawn = false
 screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+screenGui.IgnoreGuiInset = true
+screenGui.DisplayOrder = 1000
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.ResetOnSpawn = false
 
--- Background
-local bg = Instance.new("Frame")
-bg.Size = UDim2.new(1, 0, 1, 0)
-bg.BackgroundColor3 = Color3.new(0, 0, 0) -- Black
-bg.BorderSizePixel = 0
-bg.Parent = screenGui
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(1, 0, 1, 0)
+frame.Position = UDim2.new(0, 0, 0, 0)
+frame.BackgroundColor3 = Color3.fromRGB(15, 20, 25)
+frame.BorderSizePixel = 0
+frame.ZIndex = 2000
+frame.Parent = screenGui
 
--- Title
+local uiGradient = Instance.new("UIGradient")
+uiGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 20, 25)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(20, 25, 35)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 15, 25))
+}
+uiGradient.Rotation = 45
+uiGradient.Parent = frame
+
+local function createPalm(positionScale)
+    local palm = Instance.new("ImageLabel")
+    palm.Size = UDim2.new(0, 80, 0, 160)
+    palm.Position = UDim2.new(positionScale, 0, 0.5, -80)
+    palm.BackgroundTransparency = 1
+    palm.Image = "rbxassetid://136433639165033"
+    palm.ZIndex = 2000
+    palm.AnchorPoint = Vector2.new(0.5, 0.5)
+    palm.Parent = frame
+    return palm
+end
+
+local palm1 = createPalm(0.1)
+local palm2 = createPalm(0.9)
+
+local function animatePalm(palm)
+    while true do
+        tweenService:Create(palm, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+            Rotation = 5
+        }):Play()
+        wait(1.2)
+        tweenService:Create(palm, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+            Rotation = -5
+        }):Play()
+        wait(1.2)
+    end
+end
+spawn(function() animatePalm(palm1) end)
+spawn(function() animatePalm(palm2) end)
+
+local function createEmoji(emojiText, position, anchorPoint)
+    local emoji = Instance.new("TextLabel")
+    emoji.Size = UDim2.new(0, 50, 0, 50)
+    emoji.Position = position
+    emoji.AnchorPoint = anchorPoint
+    emoji.BackgroundTransparency = 1
+    emoji.Text = emojiText
+    emoji.TextScaled = true
+    emoji.Font = Enum.Font.GothamBlack
+    emoji.TextColor3 = Color3.fromRGB(255, 230, 100)
+    emoji.ZIndex = 2000
+    emoji.Parent = frame
+    return emoji
+end
+
+local emojiLeft = createEmoji("🤪", UDim2.new(0, 60, 0, 30), Vector2.new(0, 0))
+local emojiRight = createEmoji("😝", UDim2.new(1, -60, 0, 30), Vector2.new(1, 0))
+
+local function animateEmoji(emoji)
+    while true do
+        tweenService:Create(emoji, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+            Rotation = 8,
+            Position = UDim2.new(emoji.Position.X.Scale, emoji.Position.X.Offset, 0, 20)
+        }):Play()
+        wait(1.2)
+        tweenService:Create(emoji, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+            Rotation = -8,
+            Position = UDim2.new(emoji.Position.X.Scale, emoji.Position.X.Offset, 0, 40)
+        }):Play()
+        wait(1.2)
+    end
+end
+
+spawn(function() animateEmoji(emojiLeft) end)
+spawn(function() animateEmoji(emojiRight) end)
+
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 60)
-title.Position = UDim2.new(0, 0, 0.15, 0)
+title.Size = UDim2.new(0.8, 0, 0, 100)
+title.Position = UDim2.new(0.5, 0, 0.15, 0)
+title.AnchorPoint = Vector2.new(0.5, 0)
 title.BackgroundTransparency = 1
 title.Text = "🌴 GROW A GARDEN 🌴"
-title.Font = Enum.Font.Arcade -- NOTE: Emoji may not render in Arcade font
+title.TextColor3 = Color3.fromRGB(255, 230, 100)
 title.TextScaled = true
-title.TextColor3 = Color3.fromRGB(255, 215, 0)
-title.Parent = bg
+title.Font = Enum.Font.GothamBlack
+title.TextStrokeTransparency = 0.6
+title.TextStrokeColor3 = Color3.fromRGB(255, 255, 180)
+title.TextTransparency = 1
+title.ZIndex = 2000
+title.Parent = frame
 
--- Warning
-local warning = Instance.new("TextLabel")
-warning.Size = UDim2.new(1, 0, 0, 40)
-warning.Position = UDim2.new(0, 0, 0.3, 0)
-warning.BackgroundTransparency = 1
-warning.Text = "⚠ Leaving while loading may cause issues! ⚠"
-warning.Font = Enum.Font.Arcade
-warning.TextScaled = true
-warning.TextColor3 = Color3.fromRGB(255, 165, 0)
-warning.Parent = bg
+local glow = Instance.new("TextLabel")
+glow.Size = title.Size
+glow.Position = title.Position
+glow.AnchorPoint = title.AnchorPoint
+glow.BackgroundTransparency = 1
+glow.Text = title.Text
+glow.TextColor3 = Color3.fromRGB(255, 255, 180)
+glow.TextScaled = true
+glow.Font = title.Font
+glow.TextStrokeTransparency = 1
+glow.TextTransparency = 0.9
+glow.ZIndex = 1999
+glow.Parent = frame
 
--- Info
-local info = Instance.new("TextLabel")
-info.Size = UDim2.new(1, 0, 0, 40)
-info.Position = UDim2.new(0, 0, 0.38, 0)
-info.BackgroundTransparency = 1
-info.Text = "🌱 Please wait patiently, your script is preparing..."
-info.Font = Enum.Font.Arcade
-info.TextScaled = true
-info.TextColor3 = Color3.fromRGB(144, 238, 144)
-info.Parent = bg
+tweenService:Create(title, TweenInfo.new(1.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+    TextTransparency = 0,
+    TextStrokeTransparency = 0.3,
+    Position = UDim2.new(0.5, 0, 0.2, 0)
+}):Play()
 
--- Progress Bar Container
-local barContainer = Instance.new("Frame")
-barContainer.Size = UDim2.new(0.6, 0, 0, 30)
-barContainer.Position = UDim2.new(0.2, 0, 0.5, 0)
-barContainer.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-barContainer.BorderSizePixel = 0
-barContainer.Parent = bg
+spawn(function()
+    wait(1.6)
+    while true do
+        tweenService:Create(title, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+            TextColor3 = Color3.fromRGB(255, 245, 140)
+        }):Play()
+        tweenService:Create(glow, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+            TextTransparency = 0.7
+        }):Play()
+        wait(1.5)
+        tweenService:Create(title, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+            TextColor3 = Color3.fromRGB(255, 230, 100)
+        }):Play()
+        tweenService:Create(glow, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {
+            TextTransparency = 0.9
+        }):Play()
+        wait(1.5)
+    end
+end)
 
--- Progress Bar
+local warningText = Instance.new("TextLabel")
+warningText.Size = UDim2.new(0.9, 0, 0, 50)
+warningText.Position = UDim2.new(0.5, 0, 0.37, 0)
+warningText.AnchorPoint = Vector2.new(0.5, 0)
+warningText.BackgroundTransparency = 1
+warningText.Text = "⚠️ Leaving while loading may cause pet loss or a ban! ⚠️"
+warningText.TextColor3 = Color3.fromRGB(255, 165, 50)
+warningText.TextScaled = true
+warningText.TextWrapped = true
+warningText.Font = Enum.Font.GothamSemibold
+warningText.ZIndex = 2000
+warningText.Parent = frame
+
+local encouragementText = Instance.new("TextLabel")
+encouragementText.Size = UDim2.new(0.9, 0, 0, 40)
+encouragementText.Position = UDim2.new(0.5, 0, 0.5, 0)
+encouragementText.AnchorPoint = Vector2.new(0.5, 0)
+encouragementText.BackgroundTransparency = 1
+encouragementText.Text = ""
+encouragementText.TextColor3 = Color3.fromRGB(255, 255, 200)
+encouragementText.TextStrokeTransparency = 0.8
+encouragementText.TextScaled = true
+encouragementText.Font = Enum.Font.GothamMedium
+encouragementText.ZIndex = 2000
+encouragementText.TextTransparency = 1
+encouragementText.Parent = frame
+
+local phrases = {
+    "🤪 Please stay! Your game is preparing something awesome! 😝",
+    "😝 The garden takes time to grow – thank you for staying! 🤪",
+    "🤪 Almost there! Your personalized garden world is getting ready! 😝"
+}
+
+spawn(function()
+    local index = 1
+    while true do
+        encouragementText.Text = phrases[index]
+        index = index % #phrases + 1
+
+        tweenService:Create(encouragementText, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            TextTransparency = 0.1,
+            TextStrokeTransparency = 0.5
+        }):Play()
+        wait(4)
+        tweenService:Create(encouragementText, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            TextTransparency = 1,
+            TextStrokeTransparency = 1
+        }):Play()
+        wait(1.5)
+    end
+end)
+
+local loadingText = Instance.new("TextLabel")
+loadingText.Size = UDim2.new(0.9, 0, 0, 40)
+loadingText.Position = UDim2.new(0.5, 0, 0.87, 0)
+loadingText.AnchorPoint = Vector2.new(0.5, 0)
+loadingText.BackgroundTransparency = 1
+loadingText.Text = "Script Loading, Please Wait..."
+loadingText.TextColor3 = Color3.fromRGB(200, 200, 200)
+loadingText.TextScaled = true
+loadingText.Font = Enum.Font.Gotham
+loadingText.ZIndex = 2000
+loadingText.Parent = frame
+
 local progressBar = Instance.new("Frame")
-progressBar.Size = UDim2.new(0, 0, 1, 0)
-progressBar.BackgroundColor3 = Color3.fromRGB(50, 205, 50)
-progressBar.BorderSizePixel = 0
-progressBar.Parent = barContainer
+progressBar.Size = UDim2.new(0.4, 0, 0, 40)
+progressBar.Position = UDim2.new(0.5, 0, 0.7, 0)
+progressBar.AnchorPoint = Vector2.new(0.5, 0)
+progressBar.BackgroundTransparency = 1
+progressBar.Parent = frame
 
--- Percentage Text
+local barBase = Instance.new("ImageLabel")
+barBase.Size = UDim2.new(1, 0, 1, 0)
+barBase.BackgroundTransparency = 1
+barBase.Image = "rbxassetid://3570695787"
+barBase.ImageColor3 = Color3.fromRGB(40, 45, 50)
+barBase.ScaleType = Enum.ScaleType.Slice
+barBase.SliceCenter = Rect.new(100, 100, 100, 100)
+barBase.ZIndex = 2000
+barBase.Parent = progressBar
+
+local fill = Instance.new("ImageLabel")
+fill.Size = UDim2.new(0, 0, 1, 0)
+fill.BackgroundTransparency = 1
+fill.Image = "rbxassetid://3570695787"
+fill.ScaleType = Enum.ScaleType.Slice
+fill.SliceCenter = Rect.new(100, 100, 100, 100)
+fill.ZIndex = 2001
+fill.ImageColor3 = Color3.fromRGB(30, 255, 100)
+fill.Parent = barBase
+
+local fillGradient = Instance.new("UIGradient")
+fillGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 255, 100)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 180, 80))
+}
+fillGradient.Rotation = 0
+fillGradient.Parent = fill
+
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 20)
+uiCorner.Parent = barBase
+
+local glowStroke = Instance.new("UIStroke")
+glowStroke.Color = Color3.fromRGB(120, 255, 150)
+glowStroke.Thickness = 3
+glowStroke.Transparency = 0.3
+glowStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+glowStroke.Parent = fill
+
 local percentText = Instance.new("TextLabel")
 percentText.Size = UDim2.new(1, 0, 1, 0)
 percentText.BackgroundTransparency = 1
 percentText.Text = "0%"
-percentText.Font = Enum.Font.Arcade
+percentText.TextColor3 = Color3.fromRGB(255, 255, 255)
+percentText.TextStrokeTransparency = 0.4
 percentText.TextScaled = true
-percentText.TextColor3 = Color3.new(1, 1, 1)
-percentText.Parent = barContainer
+percentText.Font = Enum.Font.GothamBold
+percentText.ZIndex = 2002
+percentText.Parent = barBase
 
--- Plant Emoji
-local plant = Instance.new("TextLabel")
-plant.Size = UDim2.new(0, 50, 0, 50)
-plant.Position = UDim2.new(0.5, -25, 0.65, 0)
-plant.BackgroundTransparency = 1
-plant.Text = "🌿"
-plant.Font = Enum.Font.Arcade
-plant.TextScaled = true
-plant.TextColor3 = Color3.new(1, 1, 1)
-plant.Parent = bg
+local goal = 100
+local duration = 110
+local stepTime = duration / goal
 
--- Loading Logic
-local progress = 0
+local fillTween = tweenService:Create(fill, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+    Size = UDim2.new(1, 0, 1, 0)
+})
+fillTween:Play()
 
--- optional: seed randomness for variety
-math.randomseed(tick() % 1 * 1e7)
+spawn(function()
+    for i = 0, goal do
+        percentText.Text = i .. "%"
+        wait(stepTime)
+    end
 
--- loop version (safer than recursion)
-task.spawn(function()
-	while progress < 98 do
-		progress = progress + 1
-		progressBar:TweenSize(
-			UDim2.new(progress/100, 0, 1, 0),
-			Enum.EasingDirection.Out,
-			Enum.EasingStyle.Quad,
-			0.2,
-			true
-		)
-		percentText.Text = progress .. "%"
+    local pulseTween = tweenService:Create(glowStroke, TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+        Transparency = 0.05,
+        Thickness = 5
+    })
+    pulseTween:Play()
 
-		-- Random pause (20% chance)
-		local delayTime = 0.12
-		if math.random() < 0.2 then
-			delayTime = 1.0 -- pause ~1 second
-		end
-		task.wait(delayTime)
-	end
-
-	-- Stuck at 98%
-	percentText.Text = "98% (Almost there...)"
-	plant.Text = "🌱"
+    wait(1)
 end)
