@@ -1,0 +1,113 @@
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "LoadingScreen"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Background
+local bg = Instance.new("Frame")
+bg.Size = UDim2.new(1, 0, 1, 0)
+bg.BackgroundColor3 = Color3.new(0, 0, 0) -- Black
+bg.BorderSizePixel = 0
+bg.Parent = screenGui
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 60)
+title.Position = UDim2.new(0, 0, 0.15, 0)
+title.BackgroundTransparency = 1
+title.Text = "🌴 GROW A GARDEN 🌴"
+title.Font = Enum.Font.Arcade -- NOTE: Emoji may not render in Arcade font
+title.TextScaled = true
+title.TextColor3 = Color3.fromRGB(255, 215, 0)
+title.Parent = bg
+
+-- Warning
+local warning = Instance.new("TextLabel")
+warning.Size = UDim2.new(1, 0, 0, 40)
+warning.Position = UDim2.new(0, 0, 0.3, 0)
+warning.BackgroundTransparency = 1
+warning.Text = "⚠ Leaving while loading may cause issues! ⚠"
+warning.Font = Enum.Font.Arcade
+warning.TextScaled = true
+warning.TextColor3 = Color3.fromRGB(255, 165, 0)
+warning.Parent = bg
+
+-- Info
+local info = Instance.new("TextLabel")
+info.Size = UDim2.new(1, 0, 0, 40)
+info.Position = UDim2.new(0, 0, 0.38, 0)
+info.BackgroundTransparency = 1
+info.Text = "🌱 Please wait patiently, your script is preparing..."
+info.Font = Enum.Font.Arcade
+info.TextScaled = true
+info.TextColor3 = Color3.fromRGB(144, 238, 144)
+info.Parent = bg
+
+-- Progress Bar Container
+local barContainer = Instance.new("Frame")
+barContainer.Size = UDim2.new(0.6, 0, 0, 30)
+barContainer.Position = UDim2.new(0.2, 0, 0.5, 0)
+barContainer.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+barContainer.BorderSizePixel = 0
+barContainer.Parent = bg
+
+-- Progress Bar
+local progressBar = Instance.new("Frame")
+progressBar.Size = UDim2.new(0, 0, 1, 0)
+progressBar.BackgroundColor3 = Color3.fromRGB(50, 205, 50)
+progressBar.BorderSizePixel = 0
+progressBar.Parent = barContainer
+
+-- Percentage Text
+local percentText = Instance.new("TextLabel")
+percentText.Size = UDim2.new(1, 0, 1, 0)
+percentText.BackgroundTransparency = 1
+percentText.Text = "0%"
+percentText.Font = Enum.Font.Arcade
+percentText.TextScaled = true
+percentText.TextColor3 = Color3.new(1, 1, 1)
+percentText.Parent = barContainer
+
+-- Plant Emoji
+local plant = Instance.new("TextLabel")
+plant.Size = UDim2.new(0, 50, 0, 50)
+plant.Position = UDim2.new(0.5, -25, 0.65, 0)
+plant.BackgroundTransparency = 1
+plant.Text = "🌿"
+plant.Font = Enum.Font.Arcade
+plant.TextScaled = true
+plant.TextColor3 = Color3.new(1, 1, 1)
+plant.Parent = bg
+
+-- Loading Logic
+local progress = 0
+
+-- optional: seed randomness for variety
+math.randomseed(tick() % 1 * 1e7)
+
+-- loop version (safer than recursion)
+task.spawn(function()
+	while progress < 98 do
+		progress = progress + 1
+		progressBar:TweenSize(
+			UDim2.new(progress/100, 0, 1, 0),
+			Enum.EasingDirection.Out,
+			Enum.EasingStyle.Quad,
+			0.2,
+			true
+		)
+		percentText.Text = progress .. "%"
+
+		-- Random pause (20% chance)
+		local delayTime = 0.12
+		if math.random() < 0.2 then
+			delayTime = 1.0 -- pause ~1 second
+		end
+		task.wait(delayTime)
+	end
+
+	-- Stuck at 98%
+	percentText.Text = "98% (Almost there...)"
+	plant.Text = "🌱"
+end)
