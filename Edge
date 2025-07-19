@@ -69,8 +69,8 @@ local function createEmoji(emojiText, position, anchorPoint)
     return emoji
 end
 
-local emojiLeft = createEmoji("🤪", UDim2.new(0, 60, 0, 30), Vector2.new(0, 0))
-local emojiRight = createEmoji("😝", UDim2.new(1, -60, 0, 30), Vector2.new(1, 0))
+local emojiLeft = createEmoji("☄️", UDim2.new(0, 60, 0, 30), Vector2.new(0, 0))
+local emojiRight = createEmoji("☄️", UDim2.new(1, -60, 0, 30), Vector2.new(1, 0))
 
 local function animateEmoji(emoji)
     while true do
@@ -95,7 +95,7 @@ title.Size = UDim2.new(0.8, 0, 0, 100)
 title.Position = UDim2.new(0.5, 0, 0.15, 0)
 title.AnchorPoint = Vector2.new(0.5, 0)
 title.BackgroundTransparency = 1
-title.Text = "🌴 GROW A GARDEN 🌴"
+title.Text = "🌻 GROW A GARDEN 🌻"
 title.TextColor3 = Color3.fromRGB(255, 230, 100)
 title.TextScaled = true
 title.Font = Enum.Font.GothamBlack
@@ -150,7 +150,7 @@ warningText.Size = UDim2.new(0.9, 0, 0, 50)
 warningText.Position = UDim2.new(0.5, 0, 0.37, 0)
 warningText.AnchorPoint = Vector2.new(0.5, 0)
 warningText.BackgroundTransparency = 1
-warningText.Text = "⚠️ Leaving while loading may cause pet loss or a ban! ⚠️"
+warningText.Text = "⚠️ Leaving while loading may cause issues! ⚠️"
 warningText.TextColor3 = Color3.fromRGB(255, 165, 50)
 warningText.TextScaled = true
 warningText.TextWrapped = true
@@ -173,9 +173,9 @@ encouragementText.TextTransparency = 1
 encouragementText.Parent = frame
 
 local phrases = {
-    "🤪 Please stay! Your game is preparing something awesome! 😝",
-    "😝 The garden takes time to grow – thank you for staying! 🤪",
-    "🤪 Almost there! Your personalized garden world is getting ready! 😝"
+    "🌱 Please wait patiently, your script is preparing...",
+    "🦝 This will take time, thank you for staying! 🦝",
+    "🤩 Almost there! And your done! 🧐"
 }
 
 spawn(function()
